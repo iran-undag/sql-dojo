@@ -5,3 +5,4 @@ dist/
 !.env.example
 npm-debug.log*
 postgres-data/
+PROJECT_CONTEXT.md
