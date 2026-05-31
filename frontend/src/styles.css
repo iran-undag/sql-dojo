@@ -1,0 +1,413 @@
+:root {
+  color: #17202a;
+  background: #f5f7f8;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 1px solid #c7d0d8;
+  background: #ffffff;
+  color: #17202a;
+  cursor: pointer;
+}
+
+button:hover {
+  border-color: #6a7f91;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+
+.top-nav {
+  align-items: center;
+  background: #17202a;
+  color: #f8fafb;
+  display: grid;
+  gap: 14px;
+  grid-template-columns: auto auto minmax(320px, 1fr);
+  padding: 14px 18px;
+}
+
+.top-nav h1 {
+  font-size: 20px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.level-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.level-tabs button,
+.lesson-link {
+  border-radius: 6px;
+  min-height: 40px;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.level-tabs button {
+  text-transform: capitalize;
+}
+
+.level-tabs .active,
+.lesson-link.active {
+  border-color: #38a169;
+  background: #dcfce7;
+  color: #16351f;
+}
+
+.lesson-tabs {
+  display: flex;
+  gap: 10px;
+  min-width: 0;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.lesson-link {
+  display: grid;
+  gap: 4px;
+  min-width: 210px;
+  width: 210px;
+}
+
+.lesson-link small {
+  color: #536474;
+  line-height: 1.35;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.85fr) minmax(520px, 1.35fr);
+  min-height: 0;
+}
+
+.lesson-panel,
+.workspace {
+  padding: 28px;
+  overflow: auto;
+}
+
+.lesson-panel {
+  background: #ffffff;
+  border-right: 1px solid #d8e0e6;
+}
+
+.level-label {
+  color: #2f855a;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0;
+  margin: 0 0 8px;
+  text-transform: uppercase;
+}
+
+h2 {
+  font-size: 28px;
+  margin: 0 0 16px;
+}
+
+h3 {
+  font-size: 15px;
+  margin: 28px 0 10px;
+}
+
+p {
+  line-height: 1.6;
+}
+
+pre,
+textarea {
+  border: 1px solid #cfd8df;
+  border-radius: 6px;
+  background: #0f1720;
+  color: #e8f1f8;
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  line-height: 1.5;
+}
+
+pre {
+  font-size: 13px;
+  overflow-wrap: anywhere;
+  padding: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.example-code {
+  max-width: 100%;
+}
+
+.workspace {
+  background: #eef3f6;
+}
+
+.workspace-header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.workspace-header h2 {
+  font-size: 22px;
+  margin: 0 0 6px;
+}
+
+.workspace-header p {
+  color: #536474;
+  line-height: 1.45;
+  margin: 0;
+  max-width: 680px;
+}
+
+.workspace-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.workspace-header button {
+  border-radius: 6px;
+  min-height: 38px;
+  padding: 8px 12px;
+}
+
+textarea {
+  display: block;
+  font-size: 14px;
+  min-height: 260px;
+  padding: 16px;
+  resize: vertical;
+  width: 100%;
+}
+
+.exercise-heading {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.exercise-heading h3 {
+  margin-bottom: 10px;
+}
+
+.exercise-heading span {
+  color: #536474;
+  font-size: 13px;
+}
+
+.exercise-heading-actions {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.exercise-heading-actions button {
+  border-radius: 6px;
+  min-height: 34px;
+  padding: 6px 10px;
+  white-space: nowrap;
+}
+
+.exercise-list {
+  display: grid;
+  gap: 10px;
+}
+
+.exercise-button {
+  border-radius: 6px;
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  text-align: left;
+  width: 100%;
+}
+
+.exercise-button span {
+  font-weight: 700;
+}
+
+.exercise-button small {
+  color: #536474;
+  line-height: 1.4;
+}
+
+.exercise-button.active {
+  border-color: #38a169;
+  background: #dcfce7;
+  color: #16351f;
+}
+
+.error,
+.check,
+.results-empty {
+  border-radius: 6px;
+  margin-top: 16px;
+  padding: 12px;
+}
+
+.error {
+  background: #fee2e2;
+  color: #8a1f1f;
+}
+
+.check {
+  background: #dcfce7;
+  color: #16351f;
+}
+
+.results-empty {
+  background: #ffffff;
+  border: 1px dashed #b8c4cc;
+  color: #536474;
+}
+
+.results {
+  background: #ffffff;
+  border: 1px solid #d8e0e6;
+  border-radius: 6px;
+  margin-top: 16px;
+  max-height: 380px;
+  overflow: auto;
+}
+
+.modal-backdrop {
+  align-items: center;
+  background: rgba(15, 23, 32, 0.58);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: fixed;
+  z-index: 10;
+}
+
+.answer-modal {
+  background: #ffffff;
+  border: 1px solid #d8e0e6;
+  border-radius: 8px;
+  box-shadow: 0 22px 60px rgba(15, 23, 32, 0.28);
+  max-width: 760px;
+  width: min(100%, 760px);
+}
+
+.modal-header {
+  align-items: center;
+  border-bottom: 1px solid #e4eaee;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 16px 18px;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
+.modal-close {
+  border-radius: 6px;
+  min-height: 36px;
+  padding: 7px 12px;
+}
+
+.answer-code {
+  border: 0;
+  border-radius: 0 0 8px 8px;
+  margin: 0;
+  max-height: 60vh;
+  overflow: auto;
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 100%;
+}
+
+th,
+td {
+  border-bottom: 1px solid #e4eaee;
+  padding: 10px 12px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+th {
+  background: #f8fafb;
+  color: #354656;
+  font-size: 13px;
+  position: sticky;
+  top: 0;
+}
+
+@media (max-width: 1050px) {
+  .top-nav,
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .top-nav {
+    align-items: stretch;
+  }
+
+  .level-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .lesson-tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  }
+
+  .lesson-link {
+    min-width: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 720px) {
+  .lesson-panel,
+  .workspace {
+    padding: 22px 18px;
+  }
+
+  .workspace-header {
+    display: grid;
+  }
+
+  .level-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .modal-backdrop {
+    align-items: flex-start;
+    padding: 18px;
+  }
+}

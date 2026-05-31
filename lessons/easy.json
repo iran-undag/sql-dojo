@@ -1,0 +1,93 @@
+{
+  "level": "easy",
+  "title": "Easy",
+  "lessons": [
+    {
+      "id": "select-columns",
+      "title": "Select Columns",
+      "summary": "Choose the columns you want to see.",
+      "explanation": "SELECT lists the columns to return. FROM tells PostgreSQL which table to read.",
+      "example": "SELECT first_name, last_name, role\nFROM employees;",
+      "exercises": [
+        {
+          "prompt": "Show every department. Return columns: name, location.",
+          "expectedSql": "SELECT name, location FROM departments ORDER BY id;"
+        },
+        {
+          "prompt": "Show each employee. Return columns: first_name, last_name, role.",
+          "expectedSql": "SELECT first_name, last_name, role FROM employees ORDER BY id;"
+        },
+        {
+          "prompt": "Show all customers. Return columns: name, city.",
+          "expectedSql": "SELECT name, city FROM customers ORDER BY id;"
+        },
+        {
+          "prompt": "Show every project. Return columns: name, status.",
+          "expectedSql": "SELECT name, status FROM projects ORDER BY id;"
+        },
+        {
+          "prompt": "Show each order. Return columns: id, order_date, status.",
+          "expectedSql": "SELECT id, order_date, status FROM orders ORDER BY id;"
+        }
+      ]
+    },
+    {
+      "id": "filter-rows",
+      "title": "Filter Rows",
+      "summary": "Use WHERE to return matching rows.",
+      "explanation": "WHERE keeps only rows that match a condition. Text values need single quotes.",
+      "example": "SELECT first_name, salary\nFROM employees\nWHERE salary >= 90000;",
+      "exercises": [
+        {
+          "prompt": "Find customers in Cebu. Return columns: id, name, city, segment.",
+          "expectedSql": "SELECT id, name, city, segment FROM customers WHERE city = 'Cebu' ORDER BY id;"
+        },
+        {
+          "prompt": "Find employees with a salary of at least 90000. Return columns: first_name, last_name, salary.",
+          "expectedSql": "SELECT first_name, last_name, salary FROM employees WHERE salary >= 90000 ORDER BY id;"
+        },
+        {
+          "prompt": "Find active projects. Return columns: name, status.",
+          "expectedSql": "SELECT name, status FROM projects WHERE status = 'active' ORDER BY id;"
+        },
+        {
+          "prompt": "Find paid orders from February 2024 onward. Return columns: id, customer_id, order_date, status.",
+          "expectedSql": "SELECT id, customer_id, order_date, status FROM orders WHERE status = 'paid' AND order_date >= '2024-02-01' ORDER BY id;"
+        },
+        {
+          "prompt": "Find sales rows where quantity is greater than 2. Return columns: product, quantity, unit_price.",
+          "expectedSql": "SELECT product, quantity, unit_price FROM sales WHERE quantity > 2 ORDER BY id;"
+        }
+      ]
+    },
+    {
+      "id": "sort-limit",
+      "title": "Sort and Limit",
+      "summary": "Order rows and keep only the first few.",
+      "explanation": "ORDER BY controls result order. LIMIT restricts how many rows are returned.",
+      "example": "SELECT first_name, last_name, salary\nFROM employees\nORDER BY salary DESC\nLIMIT 3;",
+      "exercises": [
+        {
+          "prompt": "Show employees from highest salary to lowest salary. Return columns: first_name, last_name, salary.",
+          "expectedSql": "SELECT first_name, last_name, salary FROM employees ORDER BY salary DESC;"
+        },
+        {
+          "prompt": "Show the first 3 orders by earliest order date. Return columns: id, order_date, status.",
+          "expectedSql": "SELECT id, order_date, status FROM orders ORDER BY order_date ASC LIMIT 3;"
+        },
+        {
+          "prompt": "Show customers alphabetically by name. Return columns: name, city.",
+          "expectedSql": "SELECT name, city FROM customers ORDER BY name ASC;"
+        },
+        {
+          "prompt": "Show the 2 projects with the largest budgets. Return columns: name, budget.",
+          "expectedSql": "SELECT name, budget FROM projects ORDER BY budget DESC LIMIT 2;"
+        },
+        {
+          "prompt": "Show the 5 most expensive sales line items by unit price. Return columns: product, category, unit_price.",
+          "expectedSql": "SELECT product, category, unit_price FROM sales ORDER BY unit_price DESC LIMIT 5;"
+        }
+      ]
+    }
+  ]
+}

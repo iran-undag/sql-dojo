@@ -1,0 +1,93 @@
+{
+  "level": "intermediate",
+  "title": "Intermediate",
+  "lessons": [
+    {
+      "id": "inner-joins",
+      "title": "Join Tables",
+      "summary": "Combine related rows from multiple tables.",
+      "explanation": "JOIN connects rows through matching key columns, such as employees.department_id and departments.id.",
+      "example": "SELECT e.first_name, e.last_name, d.name AS department\nFROM employees e\nJOIN departments d ON d.id = e.department_id;",
+      "exercises": [
+        {
+          "prompt": "List each employee with their department name. Return columns: first_name, last_name, department.",
+          "expectedSql": "SELECT e.first_name, e.last_name, d.name AS department FROM employees e JOIN departments d ON d.id = e.department_id ORDER BY e.id;"
+        },
+        {
+          "prompt": "Show each project assignment with employee name and project name. Return columns: first_name, last_name, project.",
+          "expectedSql": "SELECT e.first_name, e.last_name, p.name AS project FROM employee_projects ep JOIN employees e ON e.id = ep.employee_id JOIN projects p ON p.id = ep.project_id ORDER BY e.id, p.id;"
+        },
+        {
+          "prompt": "List orders with the customer name and order status. Return columns: id, customer, status.",
+          "expectedSql": "SELECT o.id, c.name AS customer, o.status FROM orders o JOIN customers c ON c.id = o.customer_id ORDER BY o.id;"
+        },
+        {
+          "prompt": "Show each sale with its order date. Return columns: product, quantity, unit_price, order_date.",
+          "expectedSql": "SELECT s.product, s.quantity, s.unit_price, o.order_date FROM sales s JOIN orders o ON o.id = s.order_id ORDER BY s.id;"
+        },
+        {
+          "prompt": "List employees assigned to the Analytics Portal project. Return columns: first_name, last_name.",
+          "expectedSql": "SELECT e.first_name, e.last_name FROM employee_projects ep JOIN employees e ON e.id = ep.employee_id JOIN projects p ON p.id = ep.project_id WHERE p.name = 'Analytics Portal' ORDER BY e.id;"
+        }
+      ]
+    },
+    {
+      "id": "group-by",
+      "title": "Aggregate With GROUP BY",
+      "summary": "Summarize rows into grouped totals.",
+      "explanation": "GROUP BY creates one result row for each group, and aggregate functions calculate values per group.",
+      "example": "SELECT category, SUM(quantity * unit_price) AS revenue\nFROM sales\nGROUP BY category;",
+      "exercises": [
+        {
+          "prompt": "Calculate total sales revenue per category. Return columns: category, revenue.",
+          "expectedSql": "SELECT category, SUM(quantity * unit_price) AS revenue FROM sales GROUP BY category ORDER BY category;"
+        },
+        {
+          "prompt": "Count employees in each department. Return columns: department, employee_count.",
+          "expectedSql": "SELECT d.name AS department, COUNT(*) AS employee_count FROM employees e JOIN departments d ON d.id = e.department_id GROUP BY d.name ORDER BY d.name;"
+        },
+        {
+          "prompt": "Calculate the average salary for each role. Return columns: role, average_salary.",
+          "expectedSql": "SELECT role, AVG(salary) AS average_salary FROM employees GROUP BY role ORDER BY role;"
+        },
+        {
+          "prompt": "Count orders by status. Return columns: status, order_count.",
+          "expectedSql": "SELECT status, COUNT(*) AS order_count FROM orders GROUP BY status ORDER BY status;"
+        },
+        {
+          "prompt": "Calculate total project hours per project. Return columns: name, total_hours.",
+          "expectedSql": "SELECT p.name, SUM(ep.hours_per_week) AS total_hours FROM employee_projects ep JOIN projects p ON p.id = ep.project_id GROUP BY p.name ORDER BY p.name;"
+        }
+      ]
+    },
+    {
+      "id": "having-aggregates",
+      "title": "Filter Groups With HAVING",
+      "summary": "Filter aggregate results after grouping.",
+      "explanation": "WHERE filters rows before grouping. HAVING filters grouped results after aggregate values are calculated.",
+      "example": "SELECT status, COUNT(*) AS order_count\nFROM orders\nGROUP BY status\nHAVING COUNT(*) > 1;",
+      "exercises": [
+        {
+          "prompt": "Find categories with total revenue above 1000. Return columns: category, revenue.",
+          "expectedSql": "SELECT category, SUM(quantity * unit_price) AS revenue FROM sales GROUP BY category HAVING SUM(quantity * unit_price) > 1000 ORDER BY category;"
+        },
+        {
+          "prompt": "Find departments with more than one employee. Return columns: department, employee_count.",
+          "expectedSql": "SELECT d.name AS department, COUNT(*) AS employee_count FROM employees e JOIN departments d ON d.id = e.department_id GROUP BY d.name HAVING COUNT(*) > 1 ORDER BY d.name;"
+        },
+        {
+          "prompt": "Find order statuses used more than once. Return columns: status, order_count.",
+          "expectedSql": "SELECT status, COUNT(*) AS order_count FROM orders GROUP BY status HAVING COUNT(*) > 1 ORDER BY status;"
+        },
+        {
+          "prompt": "Find projects with at least 20 assigned hours per week. Return columns: name, total_hours.",
+          "expectedSql": "SELECT p.name, SUM(ep.hours_per_week) AS total_hours FROM employee_projects ep JOIN projects p ON p.id = ep.project_id GROUP BY p.name HAVING SUM(ep.hours_per_week) >= 20 ORDER BY p.name;"
+        },
+        {
+          "prompt": "Find customer segments with at least 2 customers. Return columns: segment, customer_count.",
+          "expectedSql": "SELECT segment, COUNT(*) AS customer_count FROM customers GROUP BY segment HAVING COUNT(*) >= 2 ORDER BY segment;"
+        }
+      ]
+    }
+  ]
+}

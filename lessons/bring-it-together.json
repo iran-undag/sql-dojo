@@ -1,0 +1,255 @@
+{
+  "level": "bring-it-together",
+  "title": "Bring It Together",
+  "lessons": [
+    {
+      "id": "mixed-practice",
+      "title": "Mixed Practice",
+      "summary": "Five random exercises from a larger mixed pool.",
+      "explanation": "These exercises combine selection, filtering, sorting, joins, aggregates, CTEs, subqueries, and window functions. Use the Random 5 button to draw a fresh set from the pool.",
+      "example": "SELECT c.name, SUM(s.quantity * s.unit_price) AS paid_revenue\nFROM customers c\nJOIN orders o ON o.customer_id = c.id\nJOIN sales s ON s.order_id = o.id\nWHERE o.status = 'paid'\nGROUP BY c.name\nORDER BY paid_revenue DESC;",
+      "exercises": [
+        {
+          "prompt": "Show employees hired during or after 2021. Return columns: first_name, last_name, hire_date.",
+          "expectedSql": "SELECT first_name, last_name, hire_date FROM employees WHERE hire_date >= '2021-01-01' ORDER BY hire_date, id;"
+        },
+        {
+          "prompt": "Show departments located outside Manila. Return columns: name, location.",
+          "expectedSql": "SELECT name, location FROM departments WHERE location <> 'Manila' ORDER BY name;"
+        },
+        {
+          "prompt": "Show projects that are not completed. Return columns: name, status, budget.",
+          "expectedSql": "SELECT name, status, budget FROM projects WHERE status <> 'completed' ORDER BY budget DESC;"
+        },
+        {
+          "prompt": "Show customers whose segment is enterprise or mid-market. Return columns: name, city, segment.",
+          "expectedSql": "SELECT name, city, segment FROM customers WHERE segment IN ('enterprise', 'mid-market') ORDER BY segment, name;"
+        },
+        {
+          "prompt": "Show sales line items with revenue of at least 1000. Return columns: product, quantity, unit_price, line_revenue.",
+          "expectedSql": "SELECT product, quantity, unit_price, quantity * unit_price AS line_revenue FROM sales WHERE quantity * unit_price >= 1000 ORDER BY line_revenue DESC, id;"
+        },
+        {
+          "prompt": "Show the three most recently hired employees. Return columns: first_name, last_name, hire_date.",
+          "expectedSql": "SELECT first_name, last_name, hire_date FROM employees ORDER BY hire_date DESC LIMIT 3;"
+        },
+        {
+          "prompt": "Show orders that are not paid. Return columns: id, customer_id, order_date, status.",
+          "expectedSql": "SELECT id, customer_id, order_date, status FROM orders WHERE status <> 'paid' ORDER BY order_date;"
+        },
+        {
+          "prompt": "Show software sales sorted from highest line revenue to lowest. Return columns: product, quantity, unit_price, line_revenue.",
+          "expectedSql": "SELECT product, quantity, unit_price, quantity * unit_price AS line_revenue FROM sales WHERE category = 'software' ORDER BY line_revenue DESC, id;"
+        },
+        {
+          "prompt": "Show employees with salaries between 80000 and 95000. Return columns: first_name, last_name, salary.",
+          "expectedSql": "SELECT first_name, last_name, salary FROM employees WHERE salary BETWEEN 80000 AND 95000 ORDER BY salary DESC, id;"
+        },
+        {
+          "prompt": "Show the two lowest-budget projects. Return columns: name, budget.",
+          "expectedSql": "SELECT name, budget FROM projects ORDER BY budget ASC LIMIT 2;"
+        },
+        {
+          "prompt": "List employees and their department locations. Return columns: first_name, last_name, location.",
+          "expectedSql": "SELECT e.first_name, e.last_name, d.location FROM employees e JOIN departments d ON d.id = e.department_id ORDER BY e.id;"
+        },
+        {
+          "prompt": "List active project assignments. Return columns: first_name, last_name, project, hours_per_week.",
+          "expectedSql": "SELECT e.first_name, e.last_name, p.name AS project, ep.hours_per_week FROM employee_projects ep JOIN employees e ON e.id = ep.employee_id JOIN projects p ON p.id = ep.project_id WHERE p.status = 'active' ORDER BY p.name, e.id;"
+        },
+        {
+          "prompt": "Show paid orders with customer city. Return columns: id, customer, city, order_date.",
+          "expectedSql": "SELECT o.id, c.name AS customer, c.city, o.order_date FROM orders o JOIN customers c ON c.id = o.customer_id WHERE o.status = 'paid' ORDER BY o.order_date;"
+        },
+        {
+          "prompt": "Show sales with customer names. Return columns: customer, product, category, quantity.",
+          "expectedSql": "SELECT c.name AS customer, s.product, s.category, s.quantity FROM sales s JOIN orders o ON o.id = s.order_id JOIN customers c ON c.id = o.customer_id ORDER BY c.name, s.id;"
+        },
+        {
+          "prompt": "Show project assignments for Engineering employees. Return columns: first_name, last_name, project.",
+          "expectedSql": "SELECT e.first_name, e.last_name, p.name AS project FROM employees e JOIN departments d ON d.id = e.department_id JOIN employee_projects ep ON ep.employee_id = e.id JOIN projects p ON p.id = ep.project_id WHERE d.name = 'Engineering' ORDER BY e.id, p.id;"
+        },
+        {
+          "prompt": "Show paid order line revenue by customer and product. Return columns: customer, product, line_revenue.",
+          "expectedSql": "SELECT c.name AS customer, s.product, s.quantity * s.unit_price AS line_revenue FROM customers c JOIN orders o ON o.customer_id = c.id JOIN sales s ON s.order_id = o.id WHERE o.status = 'paid' ORDER BY customer, line_revenue DESC;"
+        },
+        {
+          "prompt": "List employees assigned before February 2024. Return columns: first_name, last_name, project, assigned_on.",
+          "expectedSql": "SELECT e.first_name, e.last_name, p.name AS project, ep.assigned_on FROM employee_projects ep JOIN employees e ON e.id = ep.employee_id JOIN projects p ON p.id = ep.project_id WHERE ep.assigned_on < '2024-02-01' ORDER BY ep.assigned_on, e.id;"
+        },
+        {
+          "prompt": "Show orders with their total quantity sold. Return columns: id, status, total_quantity.",
+          "expectedSql": "SELECT o.id, o.status, SUM(s.quantity) AS total_quantity FROM orders o JOIN sales s ON s.order_id = o.id GROUP BY o.id, o.status ORDER BY o.id;"
+        },
+        {
+          "prompt": "Show each department with average employee salary. Return columns: department, average_salary.",
+          "expectedSql": "SELECT d.name AS department, AVG(e.salary) AS average_salary FROM departments d JOIN employees e ON e.department_id = d.id GROUP BY d.name ORDER BY average_salary DESC;"
+        },
+        {
+          "prompt": "Show revenue by order status. Return columns: status, revenue.",
+          "expectedSql": "SELECT o.status, SUM(s.quantity * s.unit_price) AS revenue FROM orders o JOIN sales s ON s.order_id = o.id GROUP BY o.status ORDER BY revenue DESC;"
+        },
+        {
+          "prompt": "Show employee count by role initial salary band above or below 85000. Return columns: salary_band, employee_count.",
+          "expectedSql": "SELECT CASE WHEN salary >= 85000 THEN '85000 and up' ELSE 'below 85000' END AS salary_band, COUNT(*) AS employee_count FROM employees GROUP BY salary_band ORDER BY salary_band;"
+        },
+        {
+          "prompt": "Show total assigned hours by department. Return columns: department, total_hours.",
+          "expectedSql": "SELECT d.name AS department, SUM(ep.hours_per_week) AS total_hours FROM departments d JOIN employees e ON e.department_id = d.id JOIN employee_projects ep ON ep.employee_id = e.id GROUP BY d.name ORDER BY total_hours DESC;"
+        },
+        {
+          "prompt": "Show the number of sales rows per product. Return columns: product, sale_count.",
+          "expectedSql": "SELECT product, COUNT(*) AS sale_count FROM sales GROUP BY product ORDER BY sale_count DESC, product;"
+        },
+        {
+          "prompt": "Show project counts by status. Return columns: status, project_count.",
+          "expectedSql": "SELECT status, COUNT(*) AS project_count FROM projects GROUP BY status ORDER BY status;"
+        },
+        {
+          "prompt": "Show order revenue totals above 1000. Return columns: order_id, revenue.",
+          "expectedSql": "SELECT order_id, SUM(quantity * unit_price) AS revenue FROM sales GROUP BY order_id HAVING SUM(quantity * unit_price) > 1000 ORDER BY revenue DESC;"
+        },
+        {
+          "prompt": "Show categories with more than two sales rows. Return columns: category, sale_count.",
+          "expectedSql": "SELECT category, COUNT(*) AS sale_count FROM sales GROUP BY category HAVING COUNT(*) > 2 ORDER BY category;"
+        },
+        {
+          "prompt": "Show departments whose maximum salary is at least 90000. Return columns: department, max_salary.",
+          "expectedSql": "SELECT d.name AS department, MAX(e.salary) AS max_salary FROM departments d JOIN employees e ON e.department_id = d.id GROUP BY d.name HAVING MAX(e.salary) >= 90000 ORDER BY max_salary DESC;"
+        },
+        {
+          "prompt": "Show customers with more than one order. Return columns: customer, order_count.",
+          "expectedSql": "SELECT c.name AS customer, COUNT(o.id) AS order_count FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.name HAVING COUNT(o.id) > 1 ORDER BY customer;"
+        },
+        {
+          "prompt": "Show projects with exactly one assigned employee. Return columns: project, assigned_employee_count.",
+          "expectedSql": "SELECT p.name AS project, COUNT(ep.employee_id) AS assigned_employee_count FROM projects p JOIN employee_projects ep ON ep.project_id = p.id GROUP BY p.name HAVING COUNT(ep.employee_id) = 1 ORDER BY project;"
+        },
+        {
+          "prompt": "Use a CTE to calculate line revenue, then show rows above 800. Return columns: product, category, line_revenue.",
+          "expectedSql": "WITH line_revenue AS (SELECT product, category, quantity * unit_price AS line_revenue FROM sales) SELECT product, category, line_revenue FROM line_revenue WHERE line_revenue > 800 ORDER BY line_revenue DESC;"
+        },
+        {
+          "prompt": "Use a CTE to find active project workloads. Return columns: name, total_hours.",
+          "expectedSql": "WITH active_hours AS (SELECT p.name, SUM(ep.hours_per_week) AS total_hours FROM projects p JOIN employee_projects ep ON ep.project_id = p.id WHERE p.status = 'active' GROUP BY p.name) SELECT name, total_hours FROM active_hours ORDER BY total_hours DESC;"
+        },
+        {
+          "prompt": "Use a CTE to show paid revenue by customer segment. Return columns: segment, revenue.",
+          "expectedSql": "WITH paid_sales AS (SELECT c.segment, s.quantity * s.unit_price AS line_revenue FROM customers c JOIN orders o ON o.customer_id = c.id JOIN sales s ON s.order_id = o.id WHERE o.status = 'paid') SELECT segment, SUM(line_revenue) AS revenue FROM paid_sales GROUP BY segment ORDER BY revenue DESC;"
+        },
+        {
+          "prompt": "Use a CTE to find employees whose department is in Manila. Return columns: first_name, last_name, department.",
+          "expectedSql": "WITH manila_departments AS (SELECT id, name FROM departments WHERE location = 'Manila') SELECT e.first_name, e.last_name, m.name AS department FROM employees e JOIN manila_departments m ON m.id = e.department_id ORDER BY e.id;"
+        },
+        {
+          "prompt": "Use a CTE to calculate order item counts, then show orders with at least two items. Return columns: order_id, item_count.",
+          "expectedSql": "WITH item_counts AS (SELECT order_id, COUNT(*) AS item_count FROM sales GROUP BY order_id) SELECT order_id, item_count FROM item_counts WHERE item_count >= 2 ORDER BY order_id;"
+        },
+        {
+          "prompt": "Use a CTE to calculate department salaries, then show departments below 85000 average salary. Return columns: department, average_salary.",
+          "expectedSql": "WITH salary_by_department AS (SELECT d.name AS department, AVG(e.salary) AS average_salary FROM departments d JOIN employees e ON e.department_id = d.id GROUP BY d.name) SELECT department, average_salary FROM salary_by_department WHERE average_salary < 85000 ORDER BY department;"
+        },
+        {
+          "prompt": "Find employees who earn more than the average Engineering salary. Return columns: first_name, last_name, salary.",
+          "expectedSql": "SELECT first_name, last_name, salary FROM employees WHERE salary > (SELECT AVG(e.salary) FROM employees e JOIN departments d ON d.id = e.department_id WHERE d.name = 'Engineering') ORDER BY salary DESC;"
+        },
+        {
+          "prompt": "Find orders whose revenue is greater than the average order revenue. Return columns: order_id, revenue.",
+          "expectedSql": "SELECT order_id, SUM(quantity * unit_price) AS revenue FROM sales GROUP BY order_id HAVING SUM(quantity * unit_price) > (SELECT AVG(order_revenue) FROM (SELECT SUM(quantity * unit_price) AS order_revenue FROM sales GROUP BY order_id) totals) ORDER BY revenue DESC;"
+        },
+        {
+          "prompt": "Find customers who have a cancelled order. Return columns: name, city.",
+          "expectedSql": "SELECT name, city FROM customers WHERE id IN (SELECT customer_id FROM orders WHERE status = 'cancelled') ORDER BY name;"
+        },
+        {
+          "prompt": "Find employees assigned to projects with budgets over 400000. Return columns: first_name, last_name.",
+          "expectedSql": "SELECT first_name, last_name FROM employees WHERE id IN (SELECT ep.employee_id FROM employee_projects ep JOIN projects p ON p.id = ep.project_id WHERE p.budget > 400000) ORDER BY id;"
+        },
+        {
+          "prompt": "Find products sold on paid orders. Return columns: product, category.",
+          "expectedSql": "SELECT DISTINCT product, category FROM sales WHERE order_id IN (SELECT id FROM orders WHERE status = 'paid') ORDER BY product;"
+        },
+        {
+          "prompt": "Find projects whose assigned hours are above the average project assigned hours. Return columns: name, total_hours.",
+          "expectedSql": "SELECT p.name, SUM(ep.hours_per_week) AS total_hours FROM projects p JOIN employee_projects ep ON ep.project_id = p.id GROUP BY p.name HAVING SUM(ep.hours_per_week) > (SELECT AVG(total_hours) FROM (SELECT SUM(hours_per_week) AS total_hours FROM employee_projects GROUP BY project_id) project_totals) ORDER BY total_hours DESC;"
+        },
+        {
+          "prompt": "Rank customers by paid revenue. Return columns: name, paid_revenue, revenue_rank.",
+          "expectedSql": "SELECT c.name, SUM(s.quantity * s.unit_price) AS paid_revenue, RANK() OVER (ORDER BY SUM(s.quantity * s.unit_price) DESC) AS revenue_rank FROM customers c JOIN orders o ON o.customer_id = c.id JOIN sales s ON s.order_id = o.id WHERE o.status = 'paid' GROUP BY c.name ORDER BY revenue_rank, c.name;"
+        },
+        {
+          "prompt": "Show employees with their salary rank inside each department. Return columns: first_name, last_name, department_id, salary, department_salary_rank.",
+          "expectedSql": "SELECT first_name, last_name, department_id, salary, RANK() OVER (PARTITION BY department_id ORDER BY salary DESC) AS department_salary_rank FROM employees ORDER BY department_id, department_salary_rank, id;"
+        },
+        {
+          "prompt": "Show sales rows with category line-revenue rank. Return columns: product, category, line_revenue, category_rank.",
+          "expectedSql": "SELECT product, category, quantity * unit_price AS line_revenue, RANK() OVER (PARTITION BY category ORDER BY quantity * unit_price DESC) AS category_rank FROM sales ORDER BY category, category_rank, id;"
+        },
+        {
+          "prompt": "Show projects with each project's share of total budget. Return columns: name, budget, budget_share.",
+          "expectedSql": "SELECT name, budget, budget / SUM(budget) OVER () AS budget_share FROM projects ORDER BY budget DESC;"
+        },
+        {
+          "prompt": "Show orders with previous order date. Return columns: id, order_date, previous_order_date.",
+          "expectedSql": "SELECT id, order_date, LAG(order_date) OVER (ORDER BY order_date) AS previous_order_date FROM orders ORDER BY order_date;"
+        },
+        {
+          "prompt": "Show employees with company average salary beside each row. Return columns: first_name, last_name, salary, company_average_salary.",
+          "expectedSql": "SELECT first_name, last_name, salary, AVG(salary) OVER () AS company_average_salary FROM employees ORDER BY id;"
+        },
+        {
+          "prompt": "Show order revenue with running revenue by order date. Return columns: id, order_date, revenue, running_revenue.",
+          "expectedSql": "WITH order_revenue AS (SELECT o.id, o.order_date, SUM(s.quantity * s.unit_price) AS revenue FROM orders o JOIN sales s ON s.order_id = o.id GROUP BY o.id, o.order_date) SELECT id, order_date, revenue, SUM(revenue) OVER (ORDER BY order_date, id) AS running_revenue FROM order_revenue ORDER BY order_date, id;"
+        },
+        {
+          "prompt": "Show each employee's assignment count and total weekly hours. Return columns: first_name, last_name, assignment_count, total_hours.",
+          "expectedSql": "SELECT e.first_name, e.last_name, COUNT(ep.project_id) AS assignment_count, SUM(ep.hours_per_week) AS total_hours FROM employees e JOIN employee_projects ep ON ep.employee_id = e.id GROUP BY e.id, e.first_name, e.last_name ORDER BY assignment_count DESC, e.id;"
+        },
+        {
+          "prompt": "Show paid revenue by city. Return columns: city, paid_revenue.",
+          "expectedSql": "SELECT c.city, SUM(s.quantity * s.unit_price) AS paid_revenue FROM customers c JOIN orders o ON o.customer_id = c.id JOIN sales s ON s.order_id = o.id WHERE o.status = 'paid' GROUP BY c.city ORDER BY paid_revenue DESC;"
+        },
+        {
+          "prompt": "Show active projects and their assigned employee count. Return columns: name, assigned_employee_count.",
+          "expectedSql": "SELECT p.name, COUNT(ep.employee_id) AS assigned_employee_count FROM projects p JOIN employee_projects ep ON ep.project_id = p.id WHERE p.status = 'active' GROUP BY p.name ORDER BY assigned_employee_count DESC, p.name;"
+        },
+        {
+          "prompt": "Show employee assignment details for projects with at least 20 weekly hours total. Return columns: first_name, last_name, project, hours_per_week.",
+          "expectedSql": "WITH project_totals AS (SELECT project_id, SUM(hours_per_week) AS total_hours FROM employee_projects GROUP BY project_id HAVING SUM(hours_per_week) >= 20) SELECT e.first_name, e.last_name, p.name AS project, ep.hours_per_week FROM employee_projects ep JOIN project_totals pt ON pt.project_id = ep.project_id JOIN employees e ON e.id = ep.employee_id JOIN projects p ON p.id = ep.project_id ORDER BY p.name, e.id;"
+        },
+        {
+          "prompt": "Show categories and their average unit price, but only for categories with at least two units sold. Return columns: category, average_unit_price, total_quantity.",
+          "expectedSql": "SELECT category, AVG(unit_price) AS average_unit_price, SUM(quantity) AS total_quantity FROM sales GROUP BY category HAVING SUM(quantity) >= 2 ORDER BY category;"
+        },
+        {
+          "prompt": "Show customers and the date of their latest order. Return columns: name, latest_order_date.",
+          "expectedSql": "SELECT c.name, MAX(o.order_date) AS latest_order_date FROM customers c JOIN orders o ON o.customer_id = c.id GROUP BY c.name ORDER BY latest_order_date DESC;"
+        },
+        {
+          "prompt": "Show employees who work on active projects, including department and project. Return columns: first_name, last_name, department, project.",
+          "expectedSql": "SELECT e.first_name, e.last_name, d.name AS department, p.name AS project FROM employees e JOIN departments d ON d.id = e.department_id JOIN employee_projects ep ON ep.employee_id = e.id JOIN projects p ON p.id = ep.project_id WHERE p.status = 'active' ORDER BY department, e.id;"
+        },
+        {
+          "prompt": "Show each order with customer segment and revenue. Return columns: id, segment, revenue.",
+          "expectedSql": "SELECT o.id, c.segment, SUM(s.quantity * s.unit_price) AS revenue FROM orders o JOIN customers c ON c.id = o.customer_id JOIN sales s ON s.order_id = o.id GROUP BY o.id, c.segment ORDER BY o.id;"
+        },
+        {
+          "prompt": "Show departments with employees earning less than the company average. Return columns: department, employee_count.",
+          "expectedSql": "SELECT d.name AS department, COUNT(*) AS employee_count FROM employees e JOIN departments d ON d.id = e.department_id WHERE e.salary < (SELECT AVG(salary) FROM employees) GROUP BY d.name ORDER BY department;"
+        },
+        {
+          "prompt": "Show project budgets ranked within each status. Return columns: name, status, budget, status_budget_rank.",
+          "expectedSql": "SELECT name, status, budget, RANK() OVER (PARTITION BY status ORDER BY budget DESC) AS status_budget_rank FROM projects ORDER BY status, status_budget_rank, name;"
+        },
+        {
+          "prompt": "Show sales rows for customers in enterprise segment. Return columns: customer, product, line_revenue.",
+          "expectedSql": "SELECT c.name AS customer, s.product, s.quantity * s.unit_price AS line_revenue FROM customers c JOIN orders o ON o.customer_id = c.id JOIN sales s ON s.order_id = o.id WHERE c.segment = 'enterprise' ORDER BY customer, line_revenue DESC;"
+        },
+        {
+          "prompt": "Show employees whose project hours are above the average assignment hours. Return columns: first_name, last_name, project, hours_per_week.",
+          "expectedSql": "SELECT e.first_name, e.last_name, p.name AS project, ep.hours_per_week FROM employee_projects ep JOIN employees e ON e.id = ep.employee_id JOIN projects p ON p.id = ep.project_id WHERE ep.hours_per_week > (SELECT AVG(hours_per_week) FROM employee_projects) ORDER BY ep.hours_per_week DESC, e.id;"
+        }
+      ]
+    }
+  ]
+}
