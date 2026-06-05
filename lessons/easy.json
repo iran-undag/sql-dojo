@@ -10,23 +10,23 @@
       "example": "SELECT first_name, last_name, role\nFROM employees;",
       "exercises": [
         {
-          "prompt": "Show every department. Return columns: name, location.",
+          "prompt": "Show every department. Return columns: name, location. Order by: id ASC.",
           "expectedSql": "SELECT name, location FROM departments ORDER BY id;"
         },
         {
-          "prompt": "Show each employee. Return columns: first_name, last_name, role.",
+          "prompt": "Show each employee. Return columns: first_name, last_name, role. Order by: id ASC.",
           "expectedSql": "SELECT first_name, last_name, role FROM employees ORDER BY id;"
         },
         {
-          "prompt": "Show all customers. Return columns: name, city.",
+          "prompt": "Show all customers. Return columns: name, city. Order by: id ASC.",
           "expectedSql": "SELECT name, city FROM customers ORDER BY id;"
         },
         {
-          "prompt": "Show every project. Return columns: name, status.",
+          "prompt": "Show every project. Return columns: name, status. Order by: id ASC.",
           "expectedSql": "SELECT name, status FROM projects ORDER BY id;"
         },
         {
-          "prompt": "Show each order. Return columns: id, order_date, status.",
+          "prompt": "Show each order. Return columns: id, order_date, status. Order by: id ASC.",
           "expectedSql": "SELECT id, order_date, status FROM orders ORDER BY id;"
         }
       ]
@@ -39,23 +39,23 @@
       "example": "SELECT first_name, salary\nFROM employees\nWHERE salary >= 90000;",
       "exercises": [
         {
-          "prompt": "Find customers in Cebu. Return columns: id, name, city, segment.",
+          "prompt": "Find customers in Cebu. Return columns: id, name, city, segment. Order by: id ASC.",
           "expectedSql": "SELECT id, name, city, segment FROM customers WHERE city = 'Cebu' ORDER BY id;"
         },
         {
-          "prompt": "Find employees with a salary of at least 90000. Return columns: first_name, last_name, salary.",
+          "prompt": "Find employees with a salary of at least 90000. Return columns: first_name, last_name, salary. Order by: id ASC.",
           "expectedSql": "SELECT first_name, last_name, salary FROM employees WHERE salary >= 90000 ORDER BY id;"
         },
         {
-          "prompt": "Find active projects. Return columns: name, status.",
+          "prompt": "Find active projects. Return columns: name, status. Order by: id ASC.",
           "expectedSql": "SELECT name, status FROM projects WHERE status = 'active' ORDER BY id;"
         },
         {
-          "prompt": "Find paid orders from February 2024 onward. Return columns: id, customer_id, order_date, status.",
+          "prompt": "Find paid orders from February 2024 onward. Return columns: id, customer_id, order_date, status. Order by: id ASC.",
           "expectedSql": "SELECT id, customer_id, order_date, status FROM orders WHERE status = 'paid' AND order_date >= '2024-02-01' ORDER BY id;"
         },
         {
-          "prompt": "Find sales rows where quantity is greater than 2. Return columns: product, quantity, unit_price.",
+          "prompt": "Find sales rows where quantity is greater than 2. Return columns: product, quantity, unit_price. Order by: id ASC.",
           "expectedSql": "SELECT product, quantity, unit_price FROM sales WHERE quantity > 2 ORDER BY id;"
         }
       ]
@@ -68,23 +68,23 @@
       "example": "SELECT first_name, last_name, salary\nFROM employees\nORDER BY salary DESC\nLIMIT 3;",
       "exercises": [
         {
-          "prompt": "Show employees from highest salary to lowest salary. Return columns: first_name, last_name, salary.",
+          "prompt": "Show employees from highest salary to lowest salary. Return columns: first_name, last_name, salary. Order by: salary DESC.",
           "expectedSql": "SELECT first_name, last_name, salary FROM employees ORDER BY salary DESC;"
         },
         {
-          "prompt": "Show the first 3 orders by earliest order date. Return columns: id, order_date, status.",
+          "prompt": "Show the first 3 orders by earliest order date. Return columns: id, order_date, status. Order by: order_date ASC.",
           "expectedSql": "SELECT id, order_date, status FROM orders ORDER BY order_date ASC LIMIT 3;"
         },
         {
-          "prompt": "Show customers alphabetically by name. Return columns: name, city.",
+          "prompt": "Show customers alphabetically by name. Return columns: name, city. Order by: name ASC.",
           "expectedSql": "SELECT name, city FROM customers ORDER BY name ASC;"
         },
         {
-          "prompt": "Show the 2 projects with the largest budgets. Return columns: name, budget.",
+          "prompt": "Show the 2 projects with the largest budgets. Return columns: name, budget. Order by: budget DESC.",
           "expectedSql": "SELECT name, budget FROM projects ORDER BY budget DESC LIMIT 2;"
         },
         {
-          "prompt": "Show the 5 most expensive sales line items by unit price. Return columns: product, category, unit_price.",
+          "prompt": "Show the 5 most expensive sales line items by unit price. Return columns: product, category, unit_price. Order by: unit_price DESC.",
           "expectedSql": "SELECT product, category, unit_price FROM sales ORDER BY unit_price DESC LIMIT 5;"
         }
       ]

@@ -10,23 +10,23 @@
       "example": "WITH revenue_by_order AS (\n  SELECT order_id, SUM(quantity * unit_price) AS revenue\n  FROM sales\n  GROUP BY order_id\n)\nSELECT o.id, c.name, r.revenue\nFROM revenue_by_order r\nJOIN orders o ON o.id = r.order_id\nJOIN customers c ON c.id = o.customer_id;",
       "exercises": [
         {
-          "prompt": "Find paid orders with revenue over 1000. Return columns: id, name, revenue.",
+          "prompt": "Find paid orders with revenue over 1000. Return columns: id, name, revenue. Order by: o.id ASC.",
           "expectedSql": "WITH revenue_by_order AS (SELECT order_id, SUM(quantity * unit_price) AS revenue FROM sales GROUP BY order_id) SELECT o.id, c.name, r.revenue FROM revenue_by_order r JOIN orders o ON o.id = r.order_id JOIN customers c ON c.id = o.customer_id WHERE o.status = 'paid' AND r.revenue > 1000 ORDER BY o.id;"
         },
         {
-          "prompt": "Use a CTE to find departments with an average salary above 85000. Return columns: name, average_salary.",
+          "prompt": "Use a CTE to find departments with an average salary above 85000. Return columns: name, average_salary. Order by: name ASC.",
           "expectedSql": "WITH department_salary AS (SELECT d.name, AVG(e.salary) AS average_salary FROM employees e JOIN departments d ON d.id = e.department_id GROUP BY d.name) SELECT name, average_salary FROM department_salary WHERE average_salary > 85000 ORDER BY name;"
         },
         {
-          "prompt": "Use a CTE to calculate project workload and show projects over 40 hours per week. Return columns: name, total_hours.",
+          "prompt": "Use a CTE to calculate project workload and show projects over 40 hours per week. Return columns: name, total_hours. Order by: name ASC.",
           "expectedSql": "WITH project_hours AS (SELECT p.name, SUM(ep.hours_per_week) AS total_hours FROM employee_projects ep JOIN projects p ON p.id = ep.project_id GROUP BY p.name) SELECT name, total_hours FROM project_hours WHERE total_hours > 40 ORDER BY name;"
         },
         {
-          "prompt": "Use a CTE to show each customer's total paid revenue. Return columns: name, revenue.",
+          "prompt": "Use a CTE to show each customer's total paid revenue. Return columns: name, revenue. Order by: c.name ASC.",
           "expectedSql": "WITH paid_revenue AS (SELECT o.customer_id, SUM(s.quantity * s.unit_price) AS revenue FROM orders o JOIN sales s ON s.order_id = o.id WHERE o.status = 'paid' GROUP BY o.customer_id) SELECT c.name, p.revenue FROM paid_revenue p JOIN customers c ON c.id = p.customer_id ORDER BY c.name;"
         },
         {
-          "prompt": "Use a CTE to find employees assigned to more than one project. Return columns: first_name, last_name, project_count.",
+          "prompt": "Use a CTE to find employees assigned to more than one project. Return columns: first_name, last_name, project_count. Order by: e.id ASC.",
           "expectedSql": "WITH assignment_counts AS (SELECT employee_id, COUNT(*) AS project_count FROM employee_projects GROUP BY employee_id) SELECT e.first_name, e.last_name, a.project_count FROM assignment_counts a JOIN employees e ON e.id = a.employee_id WHERE a.project_count > 1 ORDER BY e.id;"
         }
       ]
@@ -39,23 +39,23 @@
       "example": "SELECT first_name, last_name, salary\nFROM employees\nWHERE salary > (\n  SELECT AVG(salary)\n  FROM employees\n);",
       "exercises": [
         {
-          "prompt": "Find employees whose salary is above the company average. Return columns: first_name, last_name, salary.",
+          "prompt": "Find employees whose salary is above the company average. Return columns: first_name, last_name, salary. Order by: id ASC.",
           "expectedSql": "SELECT first_name, last_name, salary FROM employees WHERE salary > (SELECT AVG(salary) FROM employees) ORDER BY id;"
         },
         {
-          "prompt": "Find projects with a budget above the average project budget. Return columns: name, budget.",
+          "prompt": "Find projects with a budget above the average project budget. Return columns: name, budget. Order by: id ASC.",
           "expectedSql": "SELECT name, budget FROM projects WHERE budget > (SELECT AVG(budget) FROM projects) ORDER BY id;"
         },
         {
-          "prompt": "Find customers who have placed at least one paid order. Return columns: name, city.",
+          "prompt": "Find customers who have placed at least one paid order. Return columns: name, city. Order by: id ASC.",
           "expectedSql": "SELECT name, city FROM customers WHERE id IN (SELECT customer_id FROM orders WHERE status = 'paid') ORDER BY id;"
         },
         {
-          "prompt": "Find products whose unit price is above the average unit price. Return columns: product, unit_price.",
+          "prompt": "Find products whose unit price is above the average unit price. Return columns: product, unit_price. Order by: id ASC.",
           "expectedSql": "SELECT product, unit_price FROM sales WHERE unit_price > (SELECT AVG(unit_price) FROM sales) ORDER BY id;"
         },
         {
-          "prompt": "Find employees who are assigned to any project. Return columns: first_name, last_name.",
+          "prompt": "Find employees who are assigned to any project. Return columns: first_name, last_name. Order by: id ASC.",
           "expectedSql": "SELECT first_name, last_name FROM employees WHERE id IN (SELECT employee_id FROM employee_projects) ORDER BY id;"
         }
       ]
@@ -68,23 +68,23 @@
       "example": "SELECT first_name, last_name, salary,\n  RANK() OVER (ORDER BY salary DESC) AS salary_rank\nFROM employees;",
       "exercises": [
         {
-          "prompt": "Rank employees by salary from highest to lowest. Return columns: first_name, last_name, salary, salary_rank.",
+          "prompt": "Rank employees by salary from highest to lowest. Return columns: first_name, last_name, salary, salary_rank. Order by: salary_rank ASC, id ASC.",
           "expectedSql": "SELECT first_name, last_name, salary, RANK() OVER (ORDER BY salary DESC) AS salary_rank FROM employees ORDER BY salary_rank, id;"
         },
         {
-          "prompt": "Show each employee with the average salary of their department. Return columns: first_name, last_name, department_id, salary, department_average.",
+          "prompt": "Show each employee with the average salary of their department. Return columns: first_name, last_name, department_id, salary, department_average. Order by: id ASC.",
           "expectedSql": "SELECT first_name, last_name, department_id, salary, AVG(salary) OVER (PARTITION BY department_id) AS department_average FROM employees ORDER BY id;"
         },
         {
-          "prompt": "Number orders from oldest to newest. Return columns: id, order_date, status, order_number.",
+          "prompt": "Number orders from oldest to newest. Return columns: id, order_date, status, order_number. Order by: order_number ASC.",
           "expectedSql": "SELECT id, order_date, status, ROW_NUMBER() OVER (ORDER BY order_date ASC) AS order_number FROM orders ORDER BY order_number;"
         },
         {
-          "prompt": "Show each sale with total revenue for its category. Return columns: product, category, line_revenue, category_revenue.",
+          "prompt": "Show each sale with total revenue for its category. Return columns: product, category, line_revenue, category_revenue. Order by: id ASC.",
           "expectedSql": "SELECT product, category, quantity * unit_price AS line_revenue, SUM(quantity * unit_price) OVER (PARTITION BY category) AS category_revenue FROM sales ORDER BY id;"
         },
         {
-          "prompt": "Rank projects by budget from largest to smallest. Return columns: name, budget, budget_rank.",
+          "prompt": "Rank projects by budget from largest to smallest. Return columns: name, budget, budget_rank. Order by: budget_rank ASC, id ASC.",
           "expectedSql": "SELECT name, budget, DENSE_RANK() OVER (ORDER BY budget DESC) AS budget_rank FROM projects ORDER BY budget_rank, id;"
         }
       ]

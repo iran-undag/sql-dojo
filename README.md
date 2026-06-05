@@ -4,14 +4,35 @@ Local SQL learning app with a React + Vite frontend, Express backend, and Postgr
 
 ## Run
 
+### Prerequisites
+
+- Docker
+- Docker Compose
+
+### Start the app
+
+From the repository root:
+
 ```sh
-docker compose up --build
+docker compose up --build -d
 ```
 
-Then open:
+Wait for the services to start, then open:
 
 - Frontend: http://localhost:5173
 - Backend health check: http://localhost:4000/health
+
+### Stop the app
+
+```sh
+docker compose down
+```
+
+### Reset the database
+
+```sh
+docker compose down -v
+```
 
 ## Services
 
