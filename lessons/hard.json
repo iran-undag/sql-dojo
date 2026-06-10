@@ -88,6 +88,75 @@
           "expectedSql": "SELECT name, budget, DENSE_RANK() OVER (ORDER BY budget DESC) AS budget_rank FROM projects ORDER BY budget_rank, id;"
         }
       ]
+    },
+    {
+      "id": "lag-function",
+      "title": "Use LAG",
+      "summary": "Compare each row with a previous row.",
+      "explanation": "LAG(column) looks back to a previous row in the same window. Use OVER (ORDER BY ...) to define the row order, and PARTITION BY to compare previous values inside each group.",
+      "example": "SELECT id, order_date,\n  LAG(order_date) OVER (ORDER BY order_date) AS previous_order_date\nFROM orders;",
+      "exercises": [
+        {
+          "prompt": "Show orders with the previous order date. Return columns: id, order_date, previous_order_date. Order by: order_date ASC, id ASC.",
+          "expectedSql": "SELECT id, order_date, LAG(order_date) OVER (ORDER BY order_date, id) AS previous_order_date FROM orders ORDER BY order_date, id;"
+        },
+        {
+          "prompt": "Show employees with the previous employee hire date. Return columns: first_name, last_name, hire_date, previous_hire_date. Order by: hire_date ASC, id ASC.",
+          "expectedSql": "SELECT first_name, last_name, hire_date, LAG(hire_date) OVER (ORDER BY hire_date, id) AS previous_hire_date FROM employees ORDER BY hire_date, id;"
+        },
+        {
+          "prompt": "Show projects with the previous larger project budget. Return columns: name, budget, previous_budget. Order by: budget DESC, id ASC.",
+          "expectedSql": "SELECT name, budget, LAG(budget) OVER (ORDER BY budget DESC, id) AS previous_budget FROM projects ORDER BY budget DESC, id;"
+        },
+        {
+          "prompt": "Show sales rows with the previous line revenue inside each category. Return columns: product, category, line_revenue, previous_category_revenue. Order by: category ASC, line_revenue DESC, id ASC.",
+          "expectedSql": "SELECT product, category, quantity * unit_price AS line_revenue, LAG(quantity * unit_price) OVER (PARTITION BY category ORDER BY quantity * unit_price DESC, id) AS previous_category_revenue FROM sales ORDER BY category, line_revenue DESC, id;"
+        },
+        {
+          "prompt": "Show order revenue and the change from the previous order's revenue. Return columns: id, order_date, revenue, revenue_change. Order by: order_date ASC, id ASC.",
+          "expectedSql": "WITH order_revenue AS (SELECT o.id, o.order_date, SUM(s.quantity * s.unit_price) AS revenue FROM orders o JOIN sales s ON s.order_id = o.id GROUP BY o.id, o.order_date) SELECT id, order_date, revenue, revenue - LAG(revenue) OVER (ORDER BY order_date, id) AS revenue_change FROM order_revenue ORDER BY order_date, id;"
+        },
+        {
+          "prompt": "Show employees with the previous salary inside their department. Return columns: first_name, last_name, department_id, salary, previous_department_salary. Order by: department_id ASC, salary DESC, id ASC.",
+          "expectedSql": "SELECT first_name, last_name, department_id, salary, LAG(salary) OVER (PARTITION BY department_id ORDER BY salary DESC, id) AS previous_department_salary FROM employees ORDER BY department_id, salary DESC, id;"
+        },
+        {
+          "prompt": "Show project assignments with the previous assignment date inside each project. Return columns: project_id, employee_id, assigned_on, previous_project_assigned_on. Order by: project_id ASC, assigned_on ASC, employee_id ASC.",
+          "expectedSql": "SELECT project_id, employee_id, assigned_on, LAG(assigned_on) OVER (PARTITION BY project_id ORDER BY assigned_on, employee_id) AS previous_project_assigned_on FROM employee_projects ORDER BY project_id, assigned_on, employee_id;"
+        },
+        {
+          "prompt": "Show customers with the previous customer name inside each segment. Return columns: name, segment, previous_segment_customer. Order by: segment ASC, name ASC.",
+          "expectedSql": "SELECT name, segment, LAG(name) OVER (PARTITION BY segment ORDER BY name) AS previous_segment_customer FROM customers ORDER BY segment, name;"
+        },
+        {
+          "prompt": "Show sales with the previous unit price for the same product. Return columns: product, order_date, unit_price, previous_product_unit_price. Order by: product ASC, order_date ASC, id ASC.",
+          "expectedSql": "SELECT s.product, o.order_date, s.unit_price, LAG(s.unit_price) OVER (PARTITION BY s.product ORDER BY o.order_date, s.id) AS previous_product_unit_price FROM sales s JOIN orders o ON o.id = s.order_id ORDER BY s.product, o.order_date, s.id;"
+        },
+        {
+          "prompt": "Show each customer's orders with their previous order status. Return columns: customer_id, id, order_date, status, previous_customer_status. Order by: customer_id ASC, order_date ASC, id ASC.",
+          "expectedSql": "SELECT customer_id, id, order_date, status, LAG(status) OVER (PARTITION BY customer_id ORDER BY order_date, id) AS previous_customer_status FROM orders ORDER BY customer_id, order_date, id;"
+        },
+        {
+          "prompt": "Show employees with the previous hired employee's salary. Return columns: first_name, last_name, hire_date, salary, previous_hire_salary. Order by: hire_date ASC, id ASC.",
+          "expectedSql": "SELECT first_name, last_name, hire_date, salary, LAG(salary) OVER (ORDER BY hire_date, id) AS previous_hire_salary FROM employees ORDER BY hire_date, id;"
+        },
+        {
+          "prompt": "Show project workload totals with the previous workload total. Return columns: name, total_hours, previous_total_hours. Order by: total_hours DESC, name ASC.",
+          "expectedSql": "WITH project_hours AS (SELECT p.name, SUM(ep.hours_per_week) AS total_hours FROM projects p JOIN employee_projects ep ON ep.project_id = p.id GROUP BY p.name) SELECT name, total_hours, LAG(total_hours) OVER (ORDER BY total_hours DESC, name) AS previous_total_hours FROM project_hours ORDER BY total_hours DESC, name;"
+        },
+        {
+          "prompt": "Show paid orders with the previous paid order date. Return columns: id, order_date, previous_paid_order_date. Order by: order_date ASC, id ASC.",
+          "expectedSql": "SELECT id, order_date, LAG(order_date) OVER (ORDER BY order_date, id) AS previous_paid_order_date FROM orders WHERE status = 'paid' ORDER BY order_date, id;"
+        },
+        {
+          "prompt": "Show sales line items with the previous line revenue by sale id. Return columns: id, product, line_revenue, previous_line_revenue. Order by: id ASC.",
+          "expectedSql": "SELECT id, product, quantity * unit_price AS line_revenue, LAG(quantity * unit_price) OVER (ORDER BY id) AS previous_line_revenue FROM sales ORDER BY id;"
+        },
+        {
+          "prompt": "Show customer order revenue with the previous revenue for the same customer. Return columns: customer_id, id, order_date, revenue, previous_customer_revenue. Order by: customer_id ASC, order_date ASC, id ASC.",
+          "expectedSql": "WITH order_revenue AS (SELECT o.customer_id, o.id, o.order_date, SUM(s.quantity * s.unit_price) AS revenue FROM orders o JOIN sales s ON s.order_id = o.id GROUP BY o.customer_id, o.id, o.order_date) SELECT customer_id, id, order_date, revenue, LAG(revenue) OVER (PARTITION BY customer_id ORDER BY order_date, id) AS previous_customer_revenue FROM order_revenue ORDER BY customer_id, order_date, id;"
+        }
+      ]
     }
   ]
 }

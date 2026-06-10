@@ -190,8 +190,64 @@
           "expectedSql": "SELECT name, budget, budget / SUM(budget) OVER () AS budget_share FROM projects ORDER BY budget DESC;"
         },
         {
-          "prompt": "Show orders with previous order date. Return columns: id, order_date, previous_order_date. Order by: order_date ASC.",
-          "expectedSql": "SELECT id, order_date, LAG(order_date) OVER (ORDER BY order_date) AS previous_order_date FROM orders ORDER BY order_date;"
+          "prompt": "Show department average salaries with the previous department average. Return columns: department, average_salary, previous_average_salary. Order by: average_salary DESC, department ASC.",
+          "expectedSql": "WITH department_salary AS (SELECT d.name AS department, AVG(e.salary) AS average_salary FROM departments d JOIN employees e ON e.department_id = d.id GROUP BY d.name) SELECT department, average_salary, LAG(average_salary) OVER (ORDER BY average_salary DESC, department) AS previous_average_salary FROM department_salary ORDER BY average_salary DESC, department;"
+        },
+        {
+          "prompt": "Show paid revenue by customer with the previous customer's paid revenue. Return columns: name, paid_revenue, previous_paid_revenue. Order by: paid_revenue DESC, name ASC.",
+          "expectedSql": "WITH customer_revenue AS (SELECT c.name, SUM(s.quantity * s.unit_price) AS paid_revenue FROM customers c JOIN orders o ON o.customer_id = c.id JOIN sales s ON s.order_id = o.id WHERE o.status = 'paid' GROUP BY c.name) SELECT name, paid_revenue, LAG(paid_revenue) OVER (ORDER BY paid_revenue DESC, name) AS previous_paid_revenue FROM customer_revenue ORDER BY paid_revenue DESC, name;"
+        },
+        {
+          "prompt": "Show product sales totals with the previous product total quantity. Return columns: product, total_quantity, previous_total_quantity. Order by: product ASC.",
+          "expectedSql": "WITH product_totals AS (SELECT product, SUM(quantity) AS total_quantity FROM sales GROUP BY product) SELECT product, total_quantity, LAG(total_quantity) OVER (ORDER BY product) AS previous_total_quantity FROM product_totals ORDER BY product;"
+        },
+        {
+          "prompt": "Show order item counts with the previous item count inside each status. Return columns: status, id, item_count, previous_status_item_count. Order by: status ASC, id ASC.",
+          "expectedSql": "WITH order_items AS (SELECT o.status, o.id, COUNT(s.id) AS item_count FROM orders o JOIN sales s ON s.order_id = o.id GROUP BY o.status, o.id) SELECT status, id, item_count, LAG(item_count) OVER (PARTITION BY status ORDER BY id) AS previous_status_item_count FROM order_items ORDER BY status, id;"
+        },
+        {
+          "prompt": "Show active project assignments with the previous assigned employee name inside each project. Return columns: project, employee, hours_per_week, previous_project_employee. Order by: project ASC, hours_per_week DESC, employee ASC.",
+          "expectedSql": "SELECT p.name AS project, e.first_name || ' ' || e.last_name AS employee, ep.hours_per_week, LAG(e.first_name || ' ' || e.last_name) OVER (PARTITION BY p.id ORDER BY ep.hours_per_week DESC, e.id) AS previous_project_employee FROM employee_projects ep JOIN employees e ON e.id = ep.employee_id JOIN projects p ON p.id = ep.project_id WHERE p.status = 'active' ORDER BY project, ep.hours_per_week DESC, employee;"
+        },
+        {
+          "prompt": "Show customer order timelines with the previous order date inside each customer segment. Return columns: segment, customer, order_date, previous_segment_order_date. Order by: segment ASC, order_date ASC, customer ASC.",
+          "expectedSql": "SELECT c.segment, c.name AS customer, o.order_date, LAG(o.order_date) OVER (PARTITION BY c.segment ORDER BY o.order_date, o.id) AS previous_segment_order_date FROM customers c JOIN orders o ON o.customer_id = c.id ORDER BY c.segment, o.order_date, customer;"
+        },
+        {
+          "prompt": "Show category revenue totals with the previous category revenue. Return columns: category, revenue, previous_category_revenue. Order by: revenue DESC, category ASC.",
+          "expectedSql": "WITH category_revenue AS (SELECT category, SUM(quantity * unit_price) AS revenue FROM sales GROUP BY category) SELECT category, revenue, LAG(revenue) OVER (ORDER BY revenue DESC, category) AS previous_category_revenue FROM category_revenue ORDER BY revenue DESC, category;"
+        },
+        {
+          "prompt": "Show project budgets with the previous budget inside each project status. Return columns: name, status, budget, previous_status_budget. Order by: status ASC, budget DESC, name ASC.",
+          "expectedSql": "SELECT name, status, budget, LAG(budget) OVER (PARTITION BY status ORDER BY budget DESC, name) AS previous_status_budget FROM projects ORDER BY status, budget DESC, name;"
+        },
+        {
+          "prompt": "Show employee assignment hours with the previous assignment hours inside each department. Return columns: department, first_name, last_name, hours_per_week, previous_department_hours. Order by: department ASC, hours_per_week DESC, first_name ASC.",
+          "expectedSql": "SELECT d.name AS department, e.first_name, e.last_name, ep.hours_per_week, LAG(ep.hours_per_week) OVER (PARTITION BY d.name ORDER BY ep.hours_per_week DESC, e.id) AS previous_department_hours FROM departments d JOIN employees e ON e.department_id = d.id JOIN employee_projects ep ON ep.employee_id = e.id ORDER BY department, ep.hours_per_week DESC, e.first_name;"
+        },
+        {
+          "prompt": "Show city revenue totals with the previous city revenue. Return columns: city, revenue, previous_city_revenue. Order by: revenue DESC, city ASC.",
+          "expectedSql": "WITH city_revenue AS (SELECT c.city, SUM(s.quantity * s.unit_price) AS revenue FROM customers c JOIN orders o ON o.customer_id = c.id JOIN sales s ON s.order_id = o.id GROUP BY c.city) SELECT city, revenue, LAG(revenue) OVER (ORDER BY revenue DESC, city) AS previous_city_revenue FROM city_revenue ORDER BY revenue DESC, city;"
+        },
+        {
+          "prompt": "Show monthly order counts with the previous month's order count. Return columns: order_month, order_count, previous_order_count. Order by: order_month ASC.",
+          "expectedSql": "WITH monthly_orders AS (SELECT DATE_TRUNC('month', order_date)::date AS order_month, COUNT(*) AS order_count FROM orders GROUP BY DATE_TRUNC('month', order_date)::date) SELECT order_month, order_count, LAG(order_count) OVER (ORDER BY order_month) AS previous_order_count FROM monthly_orders ORDER BY order_month;"
+        },
+        {
+          "prompt": "Show paid customer revenue ranks with the previous ranked customer. Return columns: name, paid_revenue, revenue_rank, previous_ranked_customer. Order by: revenue_rank ASC, name ASC.",
+          "expectedSql": "WITH customer_revenue AS (SELECT c.name, SUM(s.quantity * s.unit_price) AS paid_revenue FROM customers c JOIN orders o ON o.customer_id = c.id JOIN sales s ON s.order_id = o.id WHERE o.status = 'paid' GROUP BY c.name), ranked_revenue AS (SELECT name, paid_revenue, RANK() OVER (ORDER BY paid_revenue DESC) AS revenue_rank FROM customer_revenue) SELECT name, paid_revenue, revenue_rank, LAG(name) OVER (ORDER BY revenue_rank, name) AS previous_ranked_customer FROM ranked_revenue ORDER BY revenue_rank, name;"
+        },
+        {
+          "prompt": "Show category sales rows with the previous product in the same category by order date. Return columns: category, product, order_date, previous_category_product. Order by: category ASC, order_date ASC, product ASC.",
+          "expectedSql": "SELECT s.category, s.product, o.order_date, LAG(s.product) OVER (PARTITION BY s.category ORDER BY o.order_date, s.id) AS previous_category_product FROM sales s JOIN orders o ON o.id = s.order_id ORDER BY s.category, o.order_date, s.product;"
+        },
+        {
+          "prompt": "Show department employee counts with the previous department count. Return columns: department, employee_count, previous_employee_count. Order by: department ASC.",
+          "expectedSql": "WITH department_counts AS (SELECT d.name AS department, COUNT(e.id) AS employee_count FROM departments d LEFT JOIN employees e ON e.department_id = d.id GROUP BY d.name) SELECT department, employee_count, LAG(employee_count) OVER (ORDER BY department) AS previous_employee_count FROM department_counts ORDER BY department;"
+        },
+        {
+          "prompt": "Show project assignment counts with the previous count inside each project status. Return columns: status, name, assignment_count, previous_status_assignment_count. Order by: status ASC, assignment_count DESC, name ASC.",
+          "expectedSql": "WITH project_counts AS (SELECT p.status, p.name, COUNT(ep.employee_id) AS assignment_count FROM projects p LEFT JOIN employee_projects ep ON ep.project_id = p.id GROUP BY p.status, p.name) SELECT status, name, assignment_count, LAG(assignment_count) OVER (PARTITION BY status ORDER BY assignment_count DESC, name) AS previous_status_assignment_count FROM project_counts ORDER BY status, assignment_count DESC, name;"
         },
         {
           "prompt": "Show employees with company average salary beside each row. Return columns: first_name, last_name, salary, company_average_salary. Order by: id ASC.",

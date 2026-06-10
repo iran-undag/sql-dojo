@@ -10,6 +10,7 @@ const levels = [
   { id: 'bring-it-together', label: 'Bring It Together' }
 ];
 const practiceLevelId = 'bring-it-together';
+const randomExerciseLessonIds = new Set(['lag-function']);
 const workspaceComment = '-- You can have multiple SQL statements; place the cursor on a statement to run it.\n\n';
 
 function App() {
@@ -36,7 +37,7 @@ function App() {
       const data = await response.json();
 
       if (!cancelled) {
-        setLessonData(activeLevel === practiceLevelId ? preparePracticeData(data) : data);
+        setLessonData(prepareLessonData(data, activeLevel));
         setActiveLessonId(data.lessons[0]?.id ?? null);
       }
     }
@@ -102,16 +103,25 @@ function App() {
     setActiveLevel(levelId);
   }
 
+  function handleLessonClick(lessonId) {
+    setActiveLessonId(lessonId);
+    randomizeLessonExercises(lessonId);
+  }
+
   function randomizePracticeExercises() {
+    randomizeLessonExercises(activeLessonId);
+  }
+
+  function randomizeLessonExercises(lessonId) {
     setLessonData((currentLessonData) => {
-      if (!currentLessonData || activeLevel !== practiceLevelId) {
+      if (!currentLessonData) {
         return currentLessonData;
       }
 
       return {
         ...currentLessonData,
         lessons: currentLessonData.lessons.map((lesson) => {
-          if (lesson.id !== activeLessonId || !lesson.exercisePool) {
+          if (lesson.id !== lessonId || !lesson.exercisePool) {
             return lesson;
           }
 
@@ -209,7 +219,7 @@ function App() {
             <button
               key={lesson.id}
               className={lesson.id === activeLessonId ? 'lesson-link active' : 'lesson-link'}
-              onClick={() => setActiveLessonId(lesson.id)}
+              onClick={() => handleLessonClick(lesson.id)}
             >
               <span>{lesson.title}</span>
               <small>{lesson.summary}</small>
@@ -231,7 +241,7 @@ function App() {
                 <h3>Exercises</h3>
                 <div className="exercise-heading-actions">
                   <span>{activeLesson.exercises.length} tasks</span>
-                  {isPracticeLevel && (
+                  {activeLesson.exercisePool && (
                     <button onClick={randomizePracticeExercises} type="button">
                       Random 5
                     </button>
@@ -355,14 +365,20 @@ function formatValue(value) {
   return String(value);
 }
 
-function preparePracticeData(data) {
+function prepareLessonData(data, levelId) {
   return {
     ...data,
-    lessons: data.lessons.map((lesson) => ({
-      ...lesson,
-      exercisePool: lesson.exercises,
-      exercises: pickRandomItems(lesson.exercises, 5)
-    }))
+    lessons: data.lessons.map((lesson) => {
+      if (levelId !== practiceLevelId && !randomExerciseLessonIds.has(lesson.id)) {
+        return lesson;
+      }
+
+      return {
+        ...lesson,
+        exercisePool: lesson.exercises,
+        exercises: pickRandomItems(lesson.exercises, 5)
+      };
+    })
   };
 }
 
