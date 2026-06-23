@@ -34,6 +34,12 @@ docker compose down
 docker compose down -v
 ```
 
+### Get list of tables
+
+```sh
+select * from information_schema.tables where table_schema='public';
+```
+
 ## Services
 
 - `db`: PostgreSQL 16 seeded with tutorial tables.
